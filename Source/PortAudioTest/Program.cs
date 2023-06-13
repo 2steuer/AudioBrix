@@ -41,4 +41,8 @@ Console.ReadLine();
 input.Stop();
 output.Stop();
 
+await Task.Delay(100);
+input.Dispose();
+output.Dispose();
+
 PortAudioHelper.Instance.Dispose();

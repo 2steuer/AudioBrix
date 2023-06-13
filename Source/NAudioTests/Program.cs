@@ -9,8 +9,8 @@ using NAudio.Wave.SampleProviders;
 
 Console.WriteLine("Hello, World!");
 
-var wf = new WaveFileReader(@"K:\tmp\test.wav").ToSampleProvider();
-var resampling = new WdlResamplingSampleProvider(wf, 8000);
+using var wf = new WaveFileReader(@"K:\tmp\test.wav");
+var resampling = new WdlResamplingSampleProvider(wf.ToSampleProvider(), 8000);
 var fs = resampling.ToFrameSource();
 
 var ha = PortAudioHelper.GetDefaultHostApi();
@@ -26,7 +26,7 @@ Console.ReadLine();
 Console.WriteLine("Stopping");
 
 output.Stop();
-
+output.Dispose();
 Console.WriteLine("Stopped");
 
 PortAudioHelper.Instance.Dispose();

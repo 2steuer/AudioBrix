@@ -115,9 +115,6 @@ namespace AudioBrix.PortAudio.Streams
             {
                 IsRunning = false;
             }
-
-            _stream!.Dispose();
-            _stream = null;
         }
 
         protected virtual PaStreamCallbackResult StreamCallback(PaBuffer input, PaBuffer output, int framecount, PaStreamCallbackTimeInfo timeinfo, PaStreamCallbackFlags statusflags, object userdata)
