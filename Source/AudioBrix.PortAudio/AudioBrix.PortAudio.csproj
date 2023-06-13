@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\Binaries\libportaudio.dll" Link="libportaudio.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Externals\PortAudio.Net\PortAudio.Net\PortAudio.Net.csproj" />
+    <ProjectReference Include="..\AudioBrix\AudioBrix.csproj" />
+  </ItemGroup>
+
+</Project>
