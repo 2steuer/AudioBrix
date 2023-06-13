@@ -9,35 +9,36 @@ namespace AudioBrix.PortAudio.Helper
 {
     public class PortAudioHelper
     {
+        static PortAudioHelper()
+        {
+            Instance = PaLibrary.Initialize();
+        }
+
+        public static PaLibrary Instance { get; private set; }
+
         public static IEnumerable<PaHostApiTypeId> GetHostApis()
         {
-            using var pa = PaLibrary.Initialize();
-            for (int i = 0; i < pa.HostApiCount; i++)
+            for (int i = 0; i < Instance.HostApiCount; i++)
             {
-                var info = pa.GetHostApiInfo(i);
+                var info = Instance.GetHostApiInfo(i);
                 yield return info!.Value.type;
             }
         }
 
         public static PaHostApiTypeId GetDefaultHostApi()
         {
-            using var pa = PaLibrary.Initialize();
-
-            return pa.GetHostApiInfo(pa.GetDefaultHostApi)!.Value.type;
+            return Instance.GetHostApiInfo(Instance.GetDefaultHostApi)!.Value.type;
         }
 
         public static PaDeviceInfo GetDeviceInfo(PaHostApiTypeId hostApi, int hostApiIndex)
         {
-            using var pa = PaLibrary.Initialize();
-            return GetDeviceInfoInternal(pa, hostApi, hostApiIndex);
+            return GetDeviceInfoInternal(Instance, hostApi, hostApiIndex);
         }
 
         public static bool CheckFormat(PaHostApiTypeId hostApi, int hostApiDeviceIndex,
             double sampleRate, PaSampleFormat sampleFormat, int channelCount, bool output)
         {
-            using var pa = PaLibrary.Initialize();
-
-            return CheckFormatInternal(pa, hostApi, hostApiDeviceIndex, sampleRate, sampleFormat, channelCount, output);
+            return CheckFormatInternal(Instance, hostApi, hostApiDeviceIndex, sampleRate, sampleFormat, channelCount, output);
         }
 
         internal static bool CheckFormatInternal(PaLibrary pa, PaHostApiTypeId hostApi, int hostApiDeviceIndex,
@@ -61,11 +62,9 @@ namespace AudioBrix.PortAudio.Helper
         public static IEnumerable<double> FilterSampleRates(PaHostApiTypeId hostApi, int hostApiDeviceIndex,
             double[] sampleRates, PaSampleFormat sampleFormat, int channelCount, bool output)
         {
-            using var pa = PaLibrary.Initialize();
-            
             for (int i = 0; i < sampleRates.Length; i++)
             {
-                if (CheckFormatInternal(pa, hostApi, hostApiDeviceIndex, sampleRates[i], sampleFormat, channelCount, output))
+                if (CheckFormatInternal(Instance, hostApi, hostApiDeviceIndex, sampleRates[i], sampleFormat, channelCount, output))
                 {
                     yield return sampleRates[i];
                 }
@@ -97,31 +96,25 @@ namespace AudioBrix.PortAudio.Helper
 
         public static (int index, PaDeviceInfo info) GetDefaultInputDevice(PaHostApiTypeId hostApi)
         {
-            using var pa = PaLibrary.Initialize();
+            var ha = GetHostApiIndexAndInfo(Instance, hostApi);
 
-            var ha = GetHostApiIndexAndInfo(pa, hostApi);
-
-            return (ha.info.defaultInputDevice, GetDeviceInfoInternal(pa, hostApi, ha.info.defaultInputDevice));
+            return (ha.info.defaultInputDevice, GetDeviceInfoInternal(Instance, hostApi, ha.info.defaultInputDevice));
         }
 
         public static (int index, PaDeviceInfo info) GetDefaultOutputDevice(PaHostApiTypeId hostApi)
         {
-            using var pa = PaLibrary.Initialize();
+            var ha = GetHostApiIndexAndInfo(Instance, hostApi);
 
-            var ha = GetHostApiIndexAndInfo(pa, hostApi);
-
-            return (ha.info.defaultOutputDevice, GetDeviceInfoInternal(pa, hostApi, ha.info.defaultOutputDevice));
+            return (ha.info.defaultOutputDevice, GetDeviceInfoInternal(Instance, hostApi, ha.info.defaultOutputDevice));
         }
 
         internal static IEnumerable<(int index, PaDeviceInfo info)> GetFilteredDevices(PaHostApiTypeId hostApi, Func<PaDeviceInfo, bool> filter)
         {
-            using var pa = PaLibrary.Initialize();
-
-            var ha = GetHostApiIndexAndInfo(pa, hostApi);
+            var ha = GetHostApiIndexAndInfo(Instance, hostApi);
 
             for (int j = 0; j < ha.info.deviceCount; j++)
             {
-                var devInfo = pa.GetDeviceInfo(pa.HostApiDeviceIndexToDeviceIndex(ha.index, j))!.Value;
+                var devInfo = Instance.GetDeviceInfo(Instance.HostApiDeviceIndexToDeviceIndex(ha.index, j))!.Value;
 
                 if (filter(devInfo))
                 {

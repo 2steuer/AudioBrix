@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NAudio.Core" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AudioBrix.NAudio\AudioBrix.NAudio.csproj" />
     <ProjectReference Include="..\AudioBrix.PortAudio\AudioBrix.PortAudio.csproj" />
     <ProjectReference Include="..\AudioBrix\AudioBrix.csproj" />

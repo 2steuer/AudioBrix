@@ -7,8 +7,11 @@ using AudioBrix.Bricks.Generators;
 using AudioBrix.Material;
 using AudioBrix.PortAudio.Helper;
 using AudioBrix.PortAudio.Streams;
+using PortAudio.Net;
 
 Console.WriteLine("Hello, World!");
+
+Console.WriteLine(PaLibrary.VersionInfo.versionText);
 
 int sampleRate = 48000;
 int channels = 1;
@@ -35,5 +38,7 @@ output.Start();
 
 Console.ReadLine();
 
-output.Stop();
 input.Stop();
+output.Stop();
+
+PortAudioHelper.Instance.Dispose();

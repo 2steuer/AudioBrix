@@ -44,24 +44,42 @@ namespace AudioBrix.PortAudio.Streams
         protected override PaStreamCallbackResult StreamCallback(PaBuffer input, PaBuffer output, int framecount,
             PaStreamCallbackTimeInfo timeinfo, PaStreamCallbackFlags statusflags, object userdata)
         {
-            IFrameSource? source = null;
-
-            lock (this)
+            try
             {
-                source = Source;
-            }
+                IFrameSource? source = null;
 
-            if (source == null)
+                lock (this)
+                {
+                    source = Source;
+                }
+
+                if (source == null)
+                {
+                    return PaStreamCallbackResult.paContinue; // output silence
+                }
+
+                var obuf = (PaBuffer<float>)output;
+
+                var data = source.GetFrames(output.Frames);
+
+                if (data.Length > 0)
+                {
+                    data.CopyTo(obuf.Span);
+                    return IsRunning ? PaStreamCallbackResult.paContinue : PaStreamCallbackResult.paAbort;
+                }
+                else
+                {
+                    return PaStreamCallbackResult.paComplete;
+                }
+
+
+            }
+            catch (Exception e)
             {
-                return PaStreamCallbackResult.paContinue; // output silence
+                // TODO: Better handling
+                Console.WriteLine(e);
+                throw;
             }
-
-            var obuf = (PaBuffer<float>)output;
-
-            var data = source.GetFrames(output.Frames);
-            data.CopyTo(obuf.Span);
-
-            return PaStreamCallbackResult.paContinue;
         }
     }
 }

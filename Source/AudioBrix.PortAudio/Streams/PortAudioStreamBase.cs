@@ -12,7 +12,6 @@ namespace AudioBrix.PortAudio.Streams
 {
     public class PortAudioStreamBase : IDisposable, IStartStopBrick
     {
-        private readonly PaLibrary _pa;
         private PaStream? _stream = null;
 
         private readonly bool _output;
@@ -25,10 +24,8 @@ namespace AudioBrix.PortAudio.Streams
 
         public PortAudioStreamBase(bool output, PaHostApiTypeId hostApi, int hostApiDeviceIndex, PaSampleFormat sampleFormat, double sampleRate, int channelCount, double suggestedLatency)
         {
-            _pa = PaLibrary.Initialize();
-
-            var ha = PortAudioHelper.GetHostApiIndexAndInfo(_pa, hostApi);
-            var devInfo = PortAudioHelper.GetDeviceInfoInternal(_pa, hostApi, hostApiDeviceIndex);
+            var ha = PortAudioHelper.GetHostApiIndexAndInfo(PortAudioHelper.Instance, hostApi);
+            var devInfo = PortAudioHelper.GetDeviceInfoInternal(PortAudioHelper.Instance, hostApi, hostApiDeviceIndex);
 
             if (output && devInfo.maxOutputChannels == 0)
             {
@@ -43,7 +40,7 @@ namespace AudioBrix.PortAudio.Streams
                     nameof(output));
             }
 
-            if (!PortAudioHelper.CheckFormatInternal(_pa, hostApi, hostApiDeviceIndex, sampleRate, sampleFormat,
+            if (!PortAudioHelper.CheckFormatInternal(PortAudioHelper.Instance, hostApi, hostApiDeviceIndex, sampleRate, sampleFormat,
                     channelCount, output))
             {
                 throw new InvalidOperationException($"The given stream parameters are invalid!");
@@ -54,7 +51,7 @@ namespace AudioBrix.PortAudio.Streams
             _params = new PaStreamParameters()
             {
                 channelCount = channelCount,
-                device = _pa.HostApiDeviceIndexToDeviceIndex(ha.index, hostApiDeviceIndex),
+                device = PortAudioHelper.Instance.HostApiDeviceIndexToDeviceIndex(ha.index, hostApiDeviceIndex),
                 sampleFormat = sampleFormat,
                 suggestedLatency = suggestedLatency
             };
@@ -68,7 +65,7 @@ namespace AudioBrix.PortAudio.Streams
             // Minimum of 20ms per buffer
             var framesPerBuffer = (int) (_sampleRate * Math.Max(_params.suggestedLatency, 0.02));
 
-            _stream = _pa.OpenStream(_output ? null : _params, _output ? _params : null, _sampleRate, framesPerBuffer,
+            _stream = PortAudioHelper.Instance.OpenStream(_output ? null : _params, _output ? _params : null, _sampleRate, framesPerBuffer,
                 PaStreamFlags.paNoFlag, StreamCallback, null);
 
             _stream.SetStreamFinishedCallback(StreamFinishedCallback, null);
@@ -92,6 +89,11 @@ namespace AudioBrix.PortAudio.Streams
             }
 
             _stream!.StopStream();
+
+            lock (this)
+            {
+                IsRunning = false;
+            }
         }
 
         public void Abort()
@@ -125,7 +127,7 @@ namespace AudioBrix.PortAudio.Streams
 
         public void Dispose()
         {
-            _pa.Dispose();
+            _stream?.Dispose();
         }
     }
 }
