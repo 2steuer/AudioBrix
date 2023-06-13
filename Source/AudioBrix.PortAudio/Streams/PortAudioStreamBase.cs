@@ -12,6 +12,8 @@ namespace AudioBrix.PortAudio.Streams
 {
     public class PortAudioStreamBase : IDisposable, IStartStopBrick
     {
+        public event EventHandler<EventArgs>? OnStreamFinished; 
+
         private PaStream? _stream = null;
 
         private readonly bool _output;
@@ -115,6 +117,8 @@ namespace AudioBrix.PortAudio.Streams
             {
                 IsRunning = false;
             }
+
+            OnStreamFinished?.Invoke(this, EventArgs.Empty);
         }
 
         protected virtual PaStreamCallbackResult StreamCallback(PaBuffer input, PaBuffer output, int framecount, PaStreamCallbackTimeInfo timeinfo, PaStreamCallbackFlags statusflags, object userdata)
