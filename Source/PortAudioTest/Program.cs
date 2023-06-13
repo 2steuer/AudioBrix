@@ -24,7 +24,7 @@ buf.FillWithZero = false;
 buf.WaitOnEmpty = true;
 
 var buf2 = new BufferBrick(format, 96000);
-buf2.FillWithZero = false;
+buf2.FillWithZero = true;
 buf2.WaitOnEmpty = false;
 
 var motor = new MotorBrick(buf, buf2, (int)(format.SampleRate * 0.01));

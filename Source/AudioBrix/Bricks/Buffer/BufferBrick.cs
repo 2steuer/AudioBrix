@@ -54,7 +54,14 @@ namespace AudioBrix.Bricks.Buffer
 
             if (_buffer.IsEmpty && WaitOnEmpty)
             {
-                _resetEvent.WaitOne();
+                if (WaitTimeout < 0)
+                {
+                    _resetEvent.WaitOne();
+                }
+                else
+                {
+                    _resetEvent.WaitOne(WaitTimeout);
+                }
                 _resetEvent.Reset();
             }
 
