@@ -65,9 +65,9 @@ namespace AudioBrix.Bricks.Active
             }
 
             End:
-            OnFinished?.Invoke(this, EventArgs.Empty);
             _runnerThread = null;
             Running = false;
+            OnFinished?.Invoke(this, EventArgs.Empty);
         }
 
         public void Start()

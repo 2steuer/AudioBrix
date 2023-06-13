@@ -54,7 +54,8 @@ namespace AudioBrix.Bricks.Buffer
 
             if (_buffer.IsEmpty && WaitOnEmpty)
             {
-                _resetEvent.WaitOne(WaitTimeout);
+                _resetEvent.WaitOne();
+                _resetEvent.Reset();
             }
 
             var rsp = _buffer.Get(samples);
