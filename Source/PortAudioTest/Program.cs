@@ -17,15 +17,16 @@ var format = new AudioFormat(sampleRate, channels);
 
 var buf = new BufferBrick(format, 96000);
 buf.FillWithZero = false;
+buf.WaitOnEmpty = false;
 
 var ha = PortAudioHelper.GetDefaultHostApi();
 var id = PortAudioHelper.GetDefaultInputDevice(ha);
 var od = PortAudioHelper.GetDefaultOutputDevice(ha);
 
-var input = new PortAudioInput(ha, id.index, sampleRate, channels, 0.05);
+var input = new PortAudioInput(ha, id.index, sampleRate, channels, 0.025);
 input.Sink = buf;
 
-var output = new PortAudioOutput(ha, od.index, sampleRate, channels, 0.05);
+var output = new PortAudioOutput(ha, od.index, sampleRate, channels, 0.025);
 
 output.Source = buf;
 

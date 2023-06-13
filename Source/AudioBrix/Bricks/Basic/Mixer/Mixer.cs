@@ -8,7 +8,7 @@ namespace AudioBrix.Bricks.Basic.Mixer
     {
         public AudioFormat Format { get; }
 
-        private List<IFrameSource> _sources;
+        private List<IFrameSource> _sources = new();
 
         public Mixer(AudioFormat format, params IFrameSource[] sources)
         {

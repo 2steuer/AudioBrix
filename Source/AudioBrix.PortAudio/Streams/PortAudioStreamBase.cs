@@ -13,7 +13,7 @@ namespace AudioBrix.PortAudio.Streams
     public class PortAudioStreamBase : IDisposable, IStartStopBrick
     {
         private readonly PaLibrary _pa;
-        private PaStream _stream = null;
+        private PaStream? _stream = null;
 
         private readonly bool _output;
         private readonly PaStreamParameters _params;
@@ -91,7 +91,7 @@ namespace AudioBrix.PortAudio.Streams
                 }
             }
 
-            _stream.StopStream();
+            _stream!.StopStream();
         }
 
         public void Abort()
@@ -104,7 +104,7 @@ namespace AudioBrix.PortAudio.Streams
                 }
             }
 
-            _stream.AbortStream();
+            _stream!.AbortStream();
         }
 
         private void StreamFinishedCallback(object userdata)
@@ -113,6 +113,9 @@ namespace AudioBrix.PortAudio.Streams
             {
                 IsRunning = false;
             }
+
+            _stream!.Dispose();
+            _stream = null;
         }
 
         protected virtual PaStreamCallbackResult StreamCallback(PaBuffer input, PaBuffer output, int framecount, PaStreamCallbackTimeInfo timeinfo, PaStreamCallbackFlags statusflags, object userdata)
