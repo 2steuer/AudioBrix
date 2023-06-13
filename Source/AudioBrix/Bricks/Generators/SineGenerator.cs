@@ -12,13 +12,9 @@ namespace AudioBrix.Bricks.Generators
 
         public double Frequency { get; set; }
 
-        public SineGenerator(double sampleRate, int channelCount, double frequency)
+        public SineGenerator(AudioFormat format, double frequency)
         {
-            Format = new AudioFormat()
-            {
-                Channels = channelCount,
-                SampleRate = sampleRate
-            };
+            Format = format;
 
             Frequency = frequency;
         }

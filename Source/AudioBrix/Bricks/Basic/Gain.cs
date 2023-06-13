@@ -12,14 +12,10 @@ namespace AudioBrix.Bricks.Basic
 
         public float GainValue { get; set; }
 
-        public Gain(double samplerate, int channels, float gain, IFrameSource src)
+        public Gain(AudioFormat format, float gain, IFrameSource src)
         {
             _src = src;
-            Format = new AudioFormat()
-            {
-                SampleRate = samplerate,
-                Channels = channels
-            };
+            Format = format;
 
             GainValue = gain;
         }

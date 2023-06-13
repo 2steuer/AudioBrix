@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AudioBrix.Interfaces;
 using AudioBrix.Material;
 using AudioBrix.PortAudio.Helper;
 using PortAudio.Net;
 
 namespace AudioBrix.PortAudio.Streams
 {
-    public class PortAudioStreamBase : IDisposable
+    public class PortAudioStreamBase : IDisposable, IStartStopBrick
     {
         private readonly PaLibrary _pa;
         private PaStream _stream = null;
@@ -91,6 +92,19 @@ namespace AudioBrix.PortAudio.Streams
             }
 
             _stream.StopStream();
+        }
+
+        public void Abort()
+        {
+            lock (this)
+            {
+                if (!IsRunning)
+                {
+                    return;
+                }
+            }
+
+            _stream.AbortStream();
         }
 
         private void StreamFinishedCallback(object userdata)

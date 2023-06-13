@@ -40,9 +40,9 @@ namespace AudioBrix.Bricks.Buffer
         /// </summary>
         public int WaitTimeout { get; set; } = -1;
 
-        public BufferBrick(double sampleRate, int channelCount, int frameCapacity)
+        public BufferBrick(AudioFormat format, int frameCapacity)
         {
-            Format = new AudioFormat(sampleRate, channelCount);
+            Format = format;
 
             _buffer = new RingBuffer<float>(Format.Channels * frameCapacity);
             Capacity = frameCapacity;

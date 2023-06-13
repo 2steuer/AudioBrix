@@ -1,6 +1,6 @@
 ﻿namespace AudioBrix.Material
 {
-    public class AudioFormat
+    public struct AudioFormat
     {
         public double SampleRate { get; set; }
 
