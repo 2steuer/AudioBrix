@@ -11,12 +11,38 @@ namespace AudioBrix.Bricks.Active
     {
         public event EventHandler<EventArgs>? OnFinished;
 
-        private IFrameSource _source;
-        private IFrameSink _sink;
+        private IFrameSource? _source;
+        private IFrameSink? _sink;
 
         public int QueryFrameCount { get; set; }
 
         private bool _running = false;
+
+        public IFrameSource? Source
+        {
+            get => _source;
+            set
+            {
+                if (Sink != null && value != null)
+                {
+                    Sink.Format.ThrowIfNotEqual(value.Format);
+                }
+                _source = value;
+            }
+        }
+
+        public IFrameSink? Sink
+        {
+            get => _sink;
+            set
+            {
+                if (Source != null && value != null)
+                {
+                    Source.Format.ThrowIfNotEqual(value.Format);
+                }
+                _sink = value;
+            }
+        }
 
         public bool Running
         {
@@ -40,6 +66,11 @@ namespace AudioBrix.Bricks.Active
 
         private Thread? _runnerThread = null;
 
+        public MotorBrick()
+        {
+            QueryFrameCount = 20; // just any non-zero value, actually.
+        }
+
         public MotorBrick(IFrameSource source, IFrameSink sink, int queryFrameCount)
         {
             _source = source;
@@ -54,6 +85,11 @@ namespace AudioBrix.Bricks.Active
             // cancellation token source is set before starting the thread
             while (!_cancelTokenSource!.Token.IsCancellationRequested)
             {
+                if (_source == null)
+                {
+                    goto End;
+                }
+
                 var input = _source.GetFrames(QueryFrameCount);
 
                 if (input.Length == 0)
@@ -61,7 +97,7 @@ namespace AudioBrix.Bricks.Active
                     goto End; // the source is done, e.g. file is over
                 }
 
-                _sink.AddFrames(input);
+                _sink?.AddFrames(input);
             }
 
             End:
