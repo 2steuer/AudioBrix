@@ -7,6 +7,7 @@ using AudioBrix.Bricks.Active;
 using AudioBrix.Interfaces;
 using AudioBrix.Material;
 using AudioBrix.SipSorcery.Helpers;
+using Microsoft.Extensions.Logging;
 using SIPSorceryMedia.Abstractions;
 using AudioFormat = SIPSorceryMedia.Abstractions.AudioFormat;
 
@@ -41,6 +42,12 @@ namespace AudioBrix.SipSorcery
         {
             get => _motor.Source;
             set => _motor.Source = value;
+        }
+
+        public TimeSpan SourceQueryInterval
+        {
+            get => _motor.QueryInterval;
+            set => _motor.QueryInterval = value;
         }
 
         public double PackageSizeSeconds { get; set; } = 0.02;

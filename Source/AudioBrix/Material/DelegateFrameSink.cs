@@ -18,6 +18,7 @@ namespace AudioBrix.Material
         public DelegateFrameSink(AudioFormat format, FrameHandler? frameHandler)
         {
             Format = format;
+            _frameHandler = frameHandler;
         }
 
         public int AddFrames(Span<float> frames)

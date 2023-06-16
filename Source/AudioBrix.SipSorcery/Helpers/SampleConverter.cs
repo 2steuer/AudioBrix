@@ -16,7 +16,7 @@ namespace AudioBrix.SipSorcery.Helpers
         public static short GetPcm(float sample)
         {
             float clipped = Math.Max(-1f, Math.Min(sample, 1f));
-            return (short)(ushort.MaxValue * clipped);
+            return (short)(short.MaxValue * clipped);
         }
     }
 }

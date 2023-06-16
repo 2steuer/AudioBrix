@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace AudioBrix.Bricks.Active
         private IFrameSink? _sink;
 
         public int QueryFrameCount { get; set; }
+
+        public TimeSpan QueryInterval { get; set; } = TimeSpan.FromSeconds(0);
 
         private bool _running = false;
 
@@ -85,6 +88,8 @@ namespace AudioBrix.Bricks.Active
             // cancellation token source is set before starting the thread
             while (!_cancelTokenSource!.Token.IsCancellationRequested)
             {
+                Stopwatch sw = Stopwatch.StartNew();
+
                 if (_source == null)
                 {
                     goto End;
@@ -98,10 +103,16 @@ namespace AudioBrix.Bricks.Active
                 }
 
                 _sink?.AddFrames(input);
+
+                while (sw.Elapsed < QueryInterval && !_cancelTokenSource!.Token.IsCancellationRequested)
+                {
+                    Thread.Yield(); // do nothing until the query interval is elapsed
+                }
             }
 
             End:
             _runnerThread = null;
+            _cancelTokenSource = null;
             Running = false;
             OnFinished?.Invoke(this, EventArgs.Empty);
         }
@@ -133,8 +144,6 @@ namespace AudioBrix.Bricks.Active
             {
                 _cancelTokenSource.Cancel();
             }
-
-            _cancelTokenSource = null;
         }
 
         public void Abort()
