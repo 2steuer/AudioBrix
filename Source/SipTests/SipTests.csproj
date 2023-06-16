@@ -11,12 +11,12 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
-    <PackageReference Include="SIPSorcery" Version="6.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\sipsorcery\src\SIPSorcery.csproj" />
     <ProjectReference Include="..\AudioBrix.PortAudio\AudioBrix.PortAudio.csproj" />
     <ProjectReference Include="..\AudioBrix.SipSorcery\AudioBrix.SipSorcery.csproj" />
     <ProjectReference Include="..\AudioBrix\AudioBrix.csproj" />
