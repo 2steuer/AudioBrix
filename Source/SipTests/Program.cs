@@ -41,7 +41,8 @@ transport.AddSIPChannel(transport.CreateChannel(SIPProtocolsEnum.udp, AddressFam
 ManualResetEvent regRe = new ManualResetEvent(false);
 bool success = false;
 
-var rua = new SIPRegistrationUserAgent(transport, cfg.GetValue<string>("User"), cfg.GetValue<string>("Password"), cfg.GetValue<string>("Server"), 120);
+var rua = new SIPRegistrationUserAgent(transport, cfg.GetValue<string>("User"), cfg.GetValue<string>("Password"),
+    cfg.GetValue<string>("Server"), 1, sendUsernameInContactHeader:true);
 
 rua.RegistrationFailed += (sipuri, response, arg3) =>
 {
@@ -79,7 +80,10 @@ if (!success)
 
 ManualResetEvent callEvent = new ManualResetEvent(false);
 
-var uac2 = new SIPUserAgent(transport, SIPEndPoint.ParseSIPEndPoint(cfg.GetValue<string>("Server")));
+var ep = SIPEndPoint.ParseSIPEndPoint(cfg.GetValue<string>("Server"));
+
+var uac2 = new SIPUserAgent(transport, null, false);
+
 SIPServerUserAgent callServer = null;
 
 uac2.OnIncomingCall += (agent, request) =>
@@ -128,8 +132,8 @@ sink.OnStop += (sender, eventArgs) =>
 };
 
 var source = new AudioBrixSource(new AudioEncoder());
-source.SourceQueryInterval = TimeSpan.FromSeconds(0.05);
-source.PackageSizeSeconds = 0.05;
+source.SourceQueryInterval = TimeSpan.FromSeconds(0.025);
+source.PackageSizeSeconds = 0.025;
 
 source.OnFormatChanged += (sender, eventArgs) =>
 {
@@ -149,10 +153,12 @@ if (!success2)
     Console.WriteLine("Answering the call failed. :-(");
 }
 
-await Task.Delay(120000);
+await Task.Delay(5000);
 
 uac2.Hangup();
 
 Stop:
 Console.WriteLine("Shutting down");
-rua.Stop();
+rua.Stop(true);
+
+await Task.Delay(1000);
