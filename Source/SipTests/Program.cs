@@ -128,13 +128,13 @@ sink.OnStop += (sender, eventArgs) =>
 };
 
 var source = new AudioBrixSource(new AudioEncoder());
-source.SourceQueryInterval = TimeSpan.FromMilliseconds(0.05);
+source.SourceQueryInterval = TimeSpan.FromSeconds(0.05);
 source.PackageSizeSeconds = 0.05;
 
 source.OnFormatChanged += (sender, eventArgs) =>
 {
     var af = new AudioFormat(eventArgs.NewFormat.RtpClockRate, eventArgs.NewFormat.ChannelCount);
-    source.Source = new Gain(af, 0.25f, new SineGenerator(af, 500));
+    source.Source = new Gain(af, 0.1f, new SineGenerator(af, 500));
 };
 
 source.OnStart += (sender, eventArgs) => sink.StartAudioSink();
@@ -149,7 +149,7 @@ if (!success2)
     Console.WriteLine("Answering the call failed. :-(");
 }
 
-await Task.Delay(20000);
+await Task.Delay(120000);
 
 uac2.Hangup();
 
