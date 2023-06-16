@@ -159,6 +159,6 @@ uac2.Hangup();
 
 Stop:
 Console.WriteLine("Shutting down");
-rua.Stop(true);
+rua.Stop();
 
 await Task.Delay(1000);
