@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using AudioBrix.Interfaces;
 using AudioBrix.Material;
 
@@ -22,6 +23,8 @@ namespace AudioBrix.Bricks.Basic.Mixer
 
         public void AddSource(IFrameSource source)
         {
+            Format.ThrowIfNotEqual(source.Format);
+
             lock (this)
             {
                 _sources.Add(source);
@@ -46,14 +49,36 @@ namespace AudioBrix.Bricks.Basic.Mixer
 
         public Span<float> GetFrames(int frameCount)
         {
-            var fa = new Span<float>(new float[frameCount * Format.Channels]);
-
             List<IFrameSource> sourcesCopy;
 
             lock (this)
             {
                 sourcesCopy = _sources.ToList();
             }
+
+            if (sourcesCopy.Count == 0)
+            {
+                return Span<float>.Empty; // for performance reasong, better than 
+                                            // allocating the whole array below and
+                                            // not iterating anything in the foreach loop.
+            }
+            else if (sourcesCopy.Count == 1)
+            {
+                // if there is only one source, we can easily pass the result on...
+                var frms = sourcesCopy[0].GetFrames(frameCount);
+
+
+                if (frms.Length == 0)
+                {
+                    RemoveSource(sourcesCopy[0]);
+                }
+
+                return frms;
+            }
+
+            var fa = new Span<float>(new float[frameCount * Format.Channels]);
+
+            int maxLength = 0;
 
             foreach (var source in sourcesCopy)
             {
@@ -64,6 +89,8 @@ namespace AudioBrix.Bricks.Basic.Mixer
                     fa[i] += sa[i];
                 }
 
+                maxLength = Math.Max(maxLength, sa.Length);
+
                 if (sa.Length == 0)
                 {
                     // source ended, remove it now
@@ -72,7 +99,7 @@ namespace AudioBrix.Bricks.Basic.Mixer
                 }
             }
 
-            return fa;
+            return fa.Slice(0, maxLength);
         }
     }
 }
