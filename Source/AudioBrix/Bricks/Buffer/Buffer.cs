@@ -6,7 +6,7 @@ using AudioBrix.Util;
 
 namespace AudioBrix.Bricks.Buffer
 {
-    public class BufferBrick : IFrameSource, IFrameSink
+    public class Buffer : IFrameSource, IFrameSink
     {
         public AudioFormat Format { get; }
 
@@ -40,7 +40,7 @@ namespace AudioBrix.Bricks.Buffer
         /// </summary>
         public int WaitTimeout { get; set; } = -1;
 
-        public BufferBrick(AudioFormat format, int frameCapacity)
+        public Buffer(AudioFormat format, int frameCapacity)
         {
             Format = format;
 

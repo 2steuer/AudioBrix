@@ -104,7 +104,7 @@ var id = PortAudioHelper.GetDefaultInputDevice(ha);
 var od = PortAudioHelper.GetDefaultOutputDevice(ha);
 
 PortAudioOutput? paStream = null;
-BufferBrick? buf = null;
+AudioBrix.Bricks.Buffer.Buffer? buf = null;
 
 var sink = new AudioBrixSink(new AudioEncoder());
 
@@ -114,7 +114,7 @@ sink.OnFormatChanged += (sender, eventArgs) =>
     Console.WriteLine($"Format has changed: {af}");
 
     paStream = new PortAudioOutput(ha, od.index, af.SampleRate, af.Channels, 0.05);
-    buf = new BufferBrick(af, (int)af.SampleRate * 2);
+    buf = new AudioBrix.Bricks.Buffer.Buffer(af, (int)af.SampleRate * 2);
     paStream.Source = buf;
     sink.Sink = buf;
 };

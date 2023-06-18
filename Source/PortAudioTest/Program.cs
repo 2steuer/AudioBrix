@@ -20,11 +20,11 @@ int channels = 1;
 
 var format = new AudioFormat(sampleRate, channels);
 
-var buf = new BufferBrick(format, 96000);
+var buf = new AudioBrix.Bricks.Buffer.Buffer(format, 96000);
 buf.FillWithZero = false;
 buf.WaitOnEmpty = true;
 
-var buf2 = new BufferBrick(format, 96000);
+var buf2 = new AudioBrix.Bricks.Buffer.Buffer(format, 96000);
 buf2.FillWithZero = true;
 buf2.WaitOnEmpty = false;
 
