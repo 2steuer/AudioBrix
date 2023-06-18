@@ -4,7 +4,7 @@ using AudioBrix.Material;
 
 namespace AudioBrix.Bricks.Generators
 {
-    public class SineGenerator : IFrameSource
+    public class SineWave : IFrameSource
     {
         public AudioFormat Format { get; }
 
@@ -12,7 +12,7 @@ namespace AudioBrix.Bricks.Generators
 
         public double Frequency { get; set; }
 
-        public SineGenerator(AudioFormat format, double frequency)
+        public SineWave(AudioFormat format, double frequency)
         {
             Format = format;
 

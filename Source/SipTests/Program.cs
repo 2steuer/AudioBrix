@@ -138,7 +138,7 @@ source.PackageSizeSeconds = 0.025;
 source.OnFormatChanged += (sender, eventArgs) =>
 {
     var af = new AudioFormat(eventArgs.NewFormat.RtpClockRate, eventArgs.NewFormat.ChannelCount);
-    source.Source = new Gain(af, 0.1f, new SineGenerator(af, 500));
+    source.Source = new Gain(af, 0.1f, new SineWave(af, 500));
 };
 
 source.OnStart += (sender, eventArgs) => sink.StartAudioSink();
