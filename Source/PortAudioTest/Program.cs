@@ -34,6 +34,7 @@ motor.Start();
 
 
 var audioSignal = new Concatenate(format,
+    new Length(format, TimeSpan.FromSeconds(2), new Silence(format)),
     new Length(format, TimeSpan.FromSeconds(2.8), new SineGenerator(format, 220)),
     new Length(format, TimeSpan.FromSeconds(0.8), new SineGenerator(format, 440)),
     new Length(format, TimeSpan.FromSeconds(0.8), new SineGenerator(format, 880)),
