@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AudioBrix.Material;
 
 namespace AudioBrix.Bricks.Generators.Signals
 {
-    public interface IWaveFormGenerator : ISignalGenerator
+    public interface ISignalGenerator
     {
-        double Frequency { get; set; }
+        void Initialize(double sampleRate);
 
-        double Amplitude { get; set; }
+        IEnumerable<float> Get(int count);
     }
 }
