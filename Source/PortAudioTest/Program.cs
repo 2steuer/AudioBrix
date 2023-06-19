@@ -41,7 +41,8 @@ var audioSignal = new Concatenate(format,
     new Length(format, TimeSpan.FromSeconds(2), new WaveForm<Square>(format, 440)),
     new Length(format, TimeSpan.FromSeconds(2), new WaveForm<Triangle>(format, 440)),
     new Length(format, TimeSpan.FromSeconds(2), new WaveForm<Saw>(format, 440)),
-    new Length(format, TimeSpan.FromSeconds(3), new GeneratedSignal<Combined>(format, new Sine(500).Add(new Sine(640)).Add(new Sine(780))))
+    new Length(format, TimeSpan.FromSeconds(3), new GeneratedSignal<Combined>(format, new Sine(500).Add(new Sine(640)).Add(new Sine(780)))),
+    new Length(format, TimeSpan.FromSeconds(4), new GeneratedSignal<WhiteNoise>(format, new WhiteNoise(0.5)))
     );
 
 var ha = PortAudioHelper.GetDefaultHostApi();
