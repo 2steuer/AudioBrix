@@ -16,7 +16,7 @@ namespace AudioBrix.Bricks.Generators
 
         protected TGenerator Generator { get; }
 
-        protected GeneratedSignal(AudioFormat format, TGenerator generator)
+        public GeneratedSignal(AudioFormat format, TGenerator generator)
         {
             Format = format;
             Generator = generator;
