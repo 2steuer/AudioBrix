@@ -8,6 +8,7 @@ using AudioBrix.Bricks.Basic;
 using AudioBrix.Bricks.Basic.Mixer;
 using AudioBrix.Bricks.Buffer;
 using AudioBrix.Bricks.Generators;
+using AudioBrix.Bricks.Generators.Signals;
 using AudioBrix.Material;
 using AudioBrix.PortAudio.Helper;
 using AudioBrix.PortAudio.Streams;
@@ -138,7 +139,7 @@ source.PackageSizeSeconds = 0.025;
 source.OnFormatChanged += (sender, eventArgs) =>
 {
     var af = new AudioFormat(eventArgs.NewFormat.RtpClockRate, eventArgs.NewFormat.ChannelCount);
-    source.Source = new Gain(af, 0.1f, new SineWave(af, 500));
+    source.Source = new Gain(af, 0.1f, new WaveForm<Sine>(af, 500));
 };
 
 source.OnStart += (sender, eventArgs) => sink.StartAudioSink();
