@@ -1,10 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.Security.Cryptography.X509Certificates;
 using AudioBrix.Bricks.Active;
 using AudioBrix.Bricks.Basic;
 using AudioBrix.Bricks.Basic.Mixer;
 using AudioBrix.Bricks.Buffer;
+using AudioBrix.Bricks.Effects.Delay;
 using AudioBrix.Bricks.Generators;
 using AudioBrix.Bricks.Generators.Signals;
 using AudioBrix.Bricks.Generators.Signals.Extensions;
@@ -42,7 +42,7 @@ var audioSignal = new Concatenate(format,
     new Length(format, TimeSpan.FromSeconds(2), new WaveForm<Triangle>(format, 440)),
     new Length(format, TimeSpan.FromSeconds(2), new WaveForm<Saw>(format, 440)),
     new Length(format, TimeSpan.FromSeconds(3), new GeneratedSignal<Combined>(format, new Sine(500).Add(new Sine(640)).Add(new Sine(780)))),
-    new Length(format, TimeSpan.FromSeconds(4), new GeneratedSignal<WhiteNoise>(format, new WhiteNoise(0.5)))
+    new Length(format, TimeSpan.FromSeconds(4), new GeneratedSignal<WhiteNoise>(format, new WhiteNoise(0.15)))
     );
 
 var ha = PortAudioHelper.GetDefaultHostApi();
@@ -54,7 +54,9 @@ input.Sink = buf;
 
 var output = new PortAudioOutput(ha, od.index, sampleRate, channels, 0.025);
 
-var mix = new Mixer(format, buf2, audioSignal);
+var delay = new Delay(format, buf2, TimeSpan.FromSeconds(0.05), 0.25, 0.3, 0.7);
+
+var mix = new Mixer(format, delay, audioSignal);
 
 output.Source = mix;
 
