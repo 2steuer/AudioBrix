@@ -38,7 +38,25 @@ namespace AudioBrix.SipSorcery
 
         private MediaFormatManager<AudioFormat> _formatManager;
 
-        public IFrameSink? Sink { get; set; }
+        private IFrameSink? _sink = null;
+
+        public IFrameSink? Sink
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _sink;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    _sink = value;
+                }
+            }
+        }
 
         public AudioBrixSink(IAudioEncoder encoder)
         {
@@ -66,7 +84,9 @@ namespace AudioBrix.SipSorcery
                 return;
             }
 
-            if (Sink == null)
+            IFrameSink? mysink = Sink; // Thread-Safe copy!
+
+            if (mysink == null)
             {
                 return;
             }
@@ -78,7 +98,7 @@ namespace AudioBrix.SipSorcery
                 samples[i] = SampleConverter.GetSample(pcm[i]);
             }
 
-            Sink.AddFrames(samples);
+            mysink.AddFrames(samples);
         }
 
 

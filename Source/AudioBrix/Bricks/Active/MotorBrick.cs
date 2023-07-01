@@ -23,27 +23,47 @@ namespace AudioBrix.Bricks.Active
 
         public IFrameSource? Source
         {
-            get => _source;
+            get
+            {
+                lock (this)
+                {
+                    return _source;
+                }
+            } 
             set
             {
                 if (Sink != null && value != null)
                 {
                     Sink.Format.ThrowIfNotEqual(value.Format);
                 }
-                _source = value;
+
+                lock (this)
+                {
+                    _source = value;
+                }
             }
         }
 
         public IFrameSink? Sink
         {
-            get => _sink;
+            get
+            {
+                lock (this)
+                {
+                    return _sink;
+                }
+            } 
             set
             {
                 if (Source != null && value != null)
                 {
                     Source.Format.ThrowIfNotEqual(value.Format);
                 }
-                _sink = value;
+
+                lock (this)
+                {
+                    _sink = value;
+                }
             }
         }
 
@@ -90,19 +110,21 @@ namespace AudioBrix.Bricks.Active
             {
                 Stopwatch sw = Stopwatch.StartNew();
 
-                if (_source == null)
+                var mySource = Source; // Thread-Safe copy!
+
+                if (mySource == null)
                 {
                     goto End;
                 }
 
-                var input = _source.GetFrames(QueryFrameCount);
+                var input = mySource.GetFrames(QueryFrameCount);
 
                 if (input.Length == 0)
                 {
                     goto End; // the source is done, e.g. file is over
                 }
 
-                _sink?.AddFrames(input);
+                Sink?.AddFrames(input);
 
                 while (sw.Elapsed < QueryInterval && !_cancelTokenSource!.Token.IsCancellationRequested)
                 {
