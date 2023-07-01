@@ -111,7 +111,7 @@ var sink = new AudioBrixSink(new AudioEncoder());
 
 sink.OnFormatChanged += (sender, eventArgs) =>
 {
-    var af = new AudioFormat(eventArgs.NewFormat.RtpClockRate, eventArgs.NewFormat.ChannelCount);
+    var af = eventArgs.NewFormat;
     Console.WriteLine($"Format has changed: {af}");
 
     paStream = new PortAudioOutput(ha, od.index, af.SampleRate, af.Channels, 0.05);
@@ -134,11 +134,11 @@ sink.OnStop += (sender, eventArgs) =>
 
 var source = new AudioBrixSource(new AudioEncoder());
 source.SourceQueryInterval = TimeSpan.FromSeconds(0.025);
-source.PackageSizeSeconds = 0.025;
+source.PackageSize = TimeSpan.FromSeconds(0.025);
 
 source.OnFormatChanged += (sender, eventArgs) =>
 {
-    var af = new AudioFormat(eventArgs.NewFormat.RtpClockRate, eventArgs.NewFormat.ChannelCount);
+    var af = eventArgs.NewFormat;
     source.Source = new Gain(af, 0.1f, new WaveForm<Sine>(af, 500));
 };
 

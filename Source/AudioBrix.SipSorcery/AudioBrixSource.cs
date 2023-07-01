@@ -50,7 +50,7 @@ namespace AudioBrix.SipSorcery
             set => _motor.QueryInterval = value;
         }
 
-        public double PackageSizeSeconds { get; set; } = 0.02;
+        public TimeSpan PackageSize { get; set; } = TimeSpan.FromMilliseconds(20);
 
         private MotorBrick _motor = new MotorBrick();
         
@@ -83,7 +83,7 @@ namespace AudioBrix.SipSorcery
 
             _motor.Sink = new DelegateFrameSink(fmt, FrameHandler);
 
-            _motor.QueryFrameCount = (int)(fmt.SampleRate * PackageSizeSeconds);
+            _motor.QueryFrameCount = (int)(fmt.SampleRate * PackageSize.TotalSeconds);
 
             _motor.Start();
 
@@ -126,7 +126,7 @@ namespace AudioBrix.SipSorcery
         {
             _formatManager.SetSelectedFormat(audioFormat);
             _motor.Sink = null;
-            OnFormatChanged?.Invoke(this, new FormatChangedEventArgs(audioFormat));
+            OnFormatChanged?.Invoke(this, new FormatChangedEventArgs(new Material.AudioFormat(audioFormat.ClockRate, audioFormat.ChannelCount)));
         }
 
         public void RestrictFormats(Func<AudioFormat, bool> filter) => _formatManager.RestrictFormats(filter);

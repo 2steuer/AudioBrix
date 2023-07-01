@@ -12,9 +12,9 @@ namespace AudioBrix.SipSorcery
 {
     public class FormatChangedEventArgs : EventArgs
     {
-        public AudioFormat NewFormat { get; }
+        public AudioBrix.Material.AudioFormat NewFormat { get; }
 
-        public FormatChangedEventArgs(AudioFormat newFormat)
+        public FormatChangedEventArgs(AudioBrix.Material.AudioFormat newFormat)
         {
             NewFormat = newFormat;
         }
@@ -68,7 +68,7 @@ namespace AudioBrix.SipSorcery
         public void SetAudioSinkFormat(AudioFormat audioFormat)
         {
             _formatManager.SetSelectedFormat(audioFormat);
-            OnFormatChanged?.Invoke(this, new FormatChangedEventArgs(audioFormat));
+            OnFormatChanged?.Invoke(this, new FormatChangedEventArgs(new Material.AudioFormat(audioFormat.ClockRate, audioFormat.ChannelCount)));
         }
 
         public void RestrictFormats(Func<AudioFormat, bool> filter) => _formatManager.RestrictFormats(filter);
