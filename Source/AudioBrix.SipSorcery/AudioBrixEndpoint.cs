@@ -8,7 +8,7 @@ using SIPSorceryMedia.Abstractions;
 
 namespace AudioBrix.SipSorcery
 {
-    public class AudioBrixAudio
+    public class AudioBrixEndpoint
     {
         private AudioBrixSink _sink;
         private AudioBrixSource _source;
@@ -33,7 +33,7 @@ namespace AudioBrix.SipSorcery
             set => _sink.Sink = value;
         }
 
-        public AudioBrixAudio(IAudioEncoder encoder)
+        public AudioBrixEndpoint(IAudioEncoder encoder)
         {
             _sink = new AudioBrixSink(encoder);
             _sink.OnFormatChanged += _sink_OnFormatChanged;

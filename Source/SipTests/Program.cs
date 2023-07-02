@@ -105,47 +105,47 @@ var id = PortAudioHelper.GetDefaultInputDevice(ha);
 var od = PortAudioHelper.GetDefaultOutputDevice(ha);
 
 PortAudioOutput? paStream = null;
-AudioBrix.Bricks.Buffer.Buffer? buf = null;
+AudioBuffer? buf = null;
 
-var sink = new AudioBrixSink(new AudioEncoder());
+var endpoint = new AudioBrixEndpoint(new AudioEncoder());
 
-sink.OnFormatChanged += (sender, eventArgs) =>
+endpoint.SetSourceLatency(TimeSpan.FromMilliseconds(25));
+
+endpoint.OnSourceFormatChanged += (sender, eventArgs) =>
 {
     var af = eventArgs.NewFormat;
-    Console.WriteLine($"Format has changed: {af}");
+    Console.WriteLine($"SOURCE Format has changed: {af}");
 
-    paStream = new PortAudioOutput(ha, od.index, af.SampleRate, af.Channels, 0.05);
-    buf = new AudioBrix.Bricks.Buffer.Buffer(af, (int)af.SampleRate * 2);
-    paStream.Source = buf;
-    sink.Sink = buf;
+    endpoint.Source = new Gain(af, 0.1f, new WaveForm<Sine>(af, 500));
+
 };
 
-sink.OnStart += (sender, eventArgs) =>
+endpoint.OnSinkFormatChanged += (sender, eventArgs) =>
+{
+    var af = eventArgs.NewFormat;
+    Console.WriteLine($"SINK Format has changed: {af}");
+
+    paStream = new PortAudioOutput(ha, od.index, af.SampleRate, af.Channels, 0.05);
+    buf = new AudioBuffer(af, (int)af.SampleRate * 2);
+    paStream.Source = buf;
+    endpoint.Sink = buf;
+
+};
+
+endpoint.OnStart += (sender, eventArgs) =>
 {
     Console.WriteLine("Audio started");
     paStream!.Start();
 };
 
-sink.OnStop += (sender, eventArgs) =>
+endpoint.OnStop += (sender, eventArgs) =>
 {
     Console.WriteLine("Audio stopped");
     paStream!.Stop();
 };
 
-var source = new AudioBrixSource(new AudioEncoder());
-source.SourceQueryInterval = TimeSpan.FromSeconds(0.025);
-source.PackageSize = TimeSpan.FromSeconds(0.025);
 
-source.OnFormatChanged += (sender, eventArgs) =>
-{
-    var af = eventArgs.NewFormat;
-    source.Source = new Gain(af, 0.1f, new WaveForm<Sine>(af, 500));
-};
-
-source.OnStart += (sender, eventArgs) => sink.StartAudioSink();
-source.OnStop += (sender, eventArgs) => sink.CloseAudioSink();
-
-var session = new VoIPMediaSession(new MediaEndPoints() { AudioSink = sink, AudioSource = source});
+var session = new VoIPMediaSession(endpoint.ToMediaEndpoints());
 
 var success2 = await uac2.Answer(callServer, session);
 

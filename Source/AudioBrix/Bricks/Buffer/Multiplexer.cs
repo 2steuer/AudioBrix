@@ -12,7 +12,7 @@ namespace AudioBrix.Bricks.Buffer
     /// Multiplexes frames passed to <see cref="AddFrames"/> to
     /// a number of zero or more endpoints, which are <see cref="IFrameSink"/> by itself.
     ///
-    /// Use <see cref="CreateEndPoint"/> to create a <see cref="Buffer"/> backed end point or
+    /// Use <see cref="CreateEndPoint"/> to create a <see cref="AudioBuffer"/> backed end point or
     /// use <see cref="AddEndpoint"/> to add an endpoint of the <see cref="IFrameSink"/> implementation
     /// of your choice.
     ///
@@ -34,12 +34,12 @@ namespace AudioBrix.Bricks.Buffer
         /// <summary>
         /// Creates a new endpoint from which the frames can be queried.
         ///
-        /// Every endpoint is a <see cref="Buffer"/>.
+        /// Every endpoint is a <see cref="AudioBuffer"/>.
         /// </summary>
         /// <returns>The newly created endpoint.</returns>
         public IFrameSource CreateEndPoint(TimeSpan capacity)
         {
-            var newEp = new Buffer(Format, (int) (Format.SampleRate * capacity.TotalSeconds));
+            var newEp = new AudioBuffer(Format, (int) (Format.SampleRate * capacity.TotalSeconds));
 
             AddEndpoint(newEp);
 
