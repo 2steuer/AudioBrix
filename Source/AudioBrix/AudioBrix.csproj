@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir)..\Binaries</PackageOutputPath>
+    <VersionPrefix>1.0.1</VersionPrefix>
+    <Version>$(Version)</Version>
   </PropertyGroup>
 
   <ItemGroup>

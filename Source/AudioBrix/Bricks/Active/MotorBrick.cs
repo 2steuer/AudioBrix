@@ -21,6 +21,8 @@ namespace AudioBrix.Bricks.Active
 
         private bool _running = false;
 
+        private AutoResetEvent _sourceSetEvent = new AutoResetEvent(false);
+
         public IFrameSource? Source
         {
             get
@@ -39,7 +41,16 @@ namespace AudioBrix.Bricks.Active
 
                 lock (this)
                 {
+                    var sourceBefore = _source;
                     _source = value;
+
+                    if (sourceBefore == null && _source != null)
+                    {
+                        _sourceSetEvent.Set();
+                    }
+                    else if (sourceBefore != null && _source == null)
+
+                        _sourceSetEvent.Reset();
                 }
             }
         }
@@ -106,6 +117,7 @@ namespace AudioBrix.Bricks.Active
             Running = true;
 
             // cancellation token source is set before starting the thread
+            StartWhile:
             while (!_cancelTokenSource!.Token.IsCancellationRequested)
             {
                 Stopwatch sw = Stopwatch.StartNew();
@@ -114,7 +126,12 @@ namespace AudioBrix.Bricks.Active
 
                 if (mySource == null)
                 {
-                    goto End;
+                    _sourceSetEvent.WaitOne(TimeSpan.FromMilliseconds(16));
+                    // this waits for at most 16ms and then goes to the top of the while loop
+                    // 1. if the source is then set, hooray, we skip this here and read samples
+                    // 2. if the source is still not set, we get here again
+                    // 3. if the motor is cancelled, we fall through the while condition and end the motor
+                    goto StartWhile;
                 }
 
                 var input = mySource.GetFrames(QueryFrameCount);
