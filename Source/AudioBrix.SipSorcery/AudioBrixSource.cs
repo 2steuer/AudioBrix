@@ -125,8 +125,15 @@ namespace AudioBrix.SipSorcery
         public void SetAudioSourceFormat(AudioFormat audioFormat)
         {
             _formatManager.SetSelectedFormat(audioFormat);
-            _motor.Sink = null;
-            OnFormatChanged?.Invoke(this, new FormatChangedEventArgs(new Material.AudioFormat(audioFormat.ClockRate, audioFormat.ChannelCount)));
+
+            var newFormat = new Material.AudioFormat(audioFormat.ClockRate, audioFormat.ChannelCount);
+
+            if (_motor.Sink != null && !_motor.Sink.Format.Equals(newFormat))
+            {
+                _motor.Sink = null;
+            }
+
+            OnFormatChanged?.Invoke(this, new FormatChangedEventArgs(newFormat));
         }
 
         public void RestrictFormats(Func<AudioFormat, bool> filter) => _formatManager.RestrictFormats(filter);
