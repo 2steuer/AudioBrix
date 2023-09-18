@@ -6,12 +6,13 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir)..\Binaries</PackageOutputPath>
-
+    <VersionPrefix>1.0.2</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\Binaries\libportaudio.dll" Link="libportaudio.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
     </None>
   </ItemGroup>
 
