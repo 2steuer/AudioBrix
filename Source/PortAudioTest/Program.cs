@@ -17,7 +17,7 @@ Console.WriteLine("Hello, World!");
 
 Console.WriteLine(PaLibrary.VersionInfo.versionText);
 
-int sampleRate = 24000;
+int sampleRate = 48000;
 int channels = 1;
 
 var format = new AudioFormat(sampleRate, channels);
@@ -49,7 +49,12 @@ var ha = PortAudioHelper.GetDefaultHostApi();
 var id = PortAudioHelper.GetDefaultInputDevice(ha);
 var od = PortAudioHelper.GetDefaultOutputDevice(ha);
 
-var input = new PortAudioInput(ha, id.index, sampleRate, channels, 0.025);
+Console.WriteLine("INPUT:");
+Console.WriteLine(id.info.name);
+Console.WriteLine("OUTPUT:");
+Console.WriteLine(od.info.name);
+
+var input = new PortAudioInput(ha, id.index, sampleRate, channels, 0.05);
 input.Sink = buf;
 
 var output = new PortAudioOutput(ha, od.index, sampleRate, channels, 0.025);
